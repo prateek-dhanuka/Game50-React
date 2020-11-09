@@ -1,24 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+
+import Circle from "./Circle";
+import Game from "./Game";
+import React from "react";
 
 function App() {
+  const elements = [
+    <Circle x={100} y={100} maxR={100} color="black" />,
+    <Circle x={200} y={200} maxR={100} color="blue" />,
+    <Circle x={100} y={200} maxR={100} color="red" />,
+    <Circle x={200} y={100} maxR={100} color="green" />,
+  ];
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Game elements={elements} />
     </div>
   );
 }
