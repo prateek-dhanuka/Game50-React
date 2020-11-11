@@ -1,0 +1,14 @@
+.background {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.fps {
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  font-size: 8px;
+  font-family: Game;
+  color: green;
+}

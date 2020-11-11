@@ -1,20 +1,25 @@
 import "./App.css";
 
-import Circle from "./elements/Circle";
-import Game from "./Game";
+import Game, { GameRef } from "./Game/Game";
+import StateMachine, { StateMachineRef } from "./StateMachine";
+import { VIRTUAL_HEIGHT, VIRTUAL_WIDTH } from "./constants";
+
 import React from "react";
 
 function App() {
-  const elements: JSX.Element[] = [
-    <Circle x={100} y={100} maxR={10} color="black" />,
-    <Circle x={200} y={200} maxR={20} color="blue" />,
-    <Circle x={100} y={200} maxR={30} color="red" />,
-    <Circle x={200} y={100} maxR={40} color="green" />,
-  ];
+  const gameRef: GameRef = React.useRef(null);
+  const stateMachineRef: StateMachineRef = React.useRef(null);
 
   return (
     <div className="App">
-      <Game elements={elements} renderFPS />
+      <StateMachine gameRef={gameRef} ref={stateMachineRef} />
+      <Game
+        stateMachine={stateMachineRef}
+        backgroundColor="rgb(40,45,52)"
+        virtualSize={{ width: VIRTUAL_WIDTH, height: VIRTUAL_HEIGHT }}
+        ref={gameRef}
+        renderFPS
+      />
     </div>
   );
 }
