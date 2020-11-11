@@ -5,24 +5,26 @@ import { VIRTUAL_HEIGHT } from "../constants";
 type Props = Readonly<{
   x: number;
   y: number;
+  width: number;
+  height: number;
 }>;
 interface PaddleRef extends BasicHandle {
   setDy(dy: number): void;
 }
 
-const width = 5;
-const height = 30;
-
-const Circle = React.forwardRef<PaddleRef, Props>((props, ref) => {
+const Paddle = React.forwardRef<PaddleRef, Props>((props, ref) => {
   const x = React.useRef<number>(0);
   const y = React.useRef<number>(0);
+  const width = React.useRef<number>(0);
+  const height = React.useRef<number>(0);
+
   const dy = React.useRef<number>(0);
 
   React.useImperativeHandle(ref, () => ({
     update(dt: number) {
       y.current = Math.min(
         Math.max(y.current! + dy.current * dt, 0),
-        VIRTUAL_HEIGHT
+        VIRTUAL_HEIGHT - height.current
       );
       return;
     },
@@ -35,18 +37,20 @@ const Circle = React.forwardRef<PaddleRef, Props>((props, ref) => {
     console.log(`Called effect`);
     x.current = props.x;
     y.current = props.y;
-  }, [props.x, props.y]);
+    width.current = props.width;
+    height.current = props.height;
+  }, [props.x, props.y, props.height, props.width]);
 
   const style: React.CSSProperties = {
     position: "absolute",
     left: x.current,
     top: y.current,
-    width: width,
-    height: height,
+    width: width.current,
+    height: height.current,
     backgroundColor: "white",
   };
 
   return <div style={style} />;
 });
 
-export default Circle;
+export default Paddle;

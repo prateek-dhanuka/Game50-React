@@ -1,7 +1,8 @@
 import "./Game.css";
 
+import Ref, { BasicHandle } from "./RefTypes";
+
 import React from "react";
-import Ref from "./RefTypes";
 import { StateMachineRef } from "../StateMachine";
 
 interface BasicProps {
@@ -27,6 +28,7 @@ type Props = BasicPropsWithElements | BasicPropsWithStateMachine;
 
 interface GameRefInterface {
   isKeyDown(key: string): boolean;
+  getRefs(): Map<number, any>;
 }
 
 export type GameRef = React.RefObject<GameRefInterface>;
@@ -68,6 +70,10 @@ const Game = React.forwardRef<GameRefInterface, Props>((props, ref) => {
     isKeyDown: (key: string) => {
       return keysDown.current ? keysDown.current[key] : false;
     },
+    getRefs: () => {
+      console.log(`Passing refs = `, setRefs);
+      return setRefs;
+    },
   }));
 
   // Register the keypress handler
@@ -86,6 +92,10 @@ const Game = React.forwardRef<GameRefInterface, Props>((props, ref) => {
   const update = (dt: number) => {
     setFPS(1 / dt);
 
+    // Update the state machine and then the elements
+    if (props.stateMachine) {
+      props.stateMachine.current!.update(dt);
+    }
     setRefs.forEach((ref) => ref.update(dt));
   };
 
@@ -147,7 +157,10 @@ const Game = React.forwardRef<GameRefInterface, Props>((props, ref) => {
   const elements = React.useRef<JSX.Element[]>([]);
   if (props.elements === undefined) {
     // If no elements provided, a stateMachine ref was provided
-    elements.current = props.stateMachine.current!.elementsToRender();
+    if (props.stateMachine.current) {
+      elements.current = props.stateMachine.current.elementsToRender();
+      // console.log(elements.current);
+    }
   } else {
     // Elements were provided not stateMachine
     elements.current = props.elements;
@@ -173,7 +186,9 @@ const Game = React.forwardRef<GameRefInterface, Props>((props, ref) => {
         // console.log(`Element is`, element);
         return React.cloneElement(element, {
           ref: (node: Ref) => {
-            return !node ? setRefs.delete(index) : setRefs.set(index, node);
+            return !node
+              ? setRefs.delete(element.key)
+              : setRefs.set(element.key, node);
           },
         });
       })}
